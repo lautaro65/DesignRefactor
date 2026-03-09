@@ -1,6 +1,6 @@
 import NextAuth from "next-auth"
 import { PrismaAdapter } from "@auth/prisma-adapter"
-import { prisma } from "../prisma"
+import { prisma } from "@/app/prisma"
 import Google from "next-auth/providers/google"
 import Credentials from "next-auth/providers/credentials"
 import bcrypt from "bcryptjs"
@@ -33,9 +33,26 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (!passwordMatch) return null
 
-        return user
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          image: user.avatarUrl,
+        }
       },
     }),
   ],
-  session: { strategy: "database" },
+  session: { strategy: "jwt" },
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) token.id = user.id
+      return token
+    },
+    async session({ session, token }) {
+      if (session?.user && token?.id) {
+        session.user.id = token.id as string
+      }
+      return session
+    },
+  },
 })

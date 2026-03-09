@@ -1,2 +1,9 @@
-import { handlers } from "@/app/lib/auth" // Referring to the auth.ts we just created
-export const { GET, POST } = handlers
+import { DefaultSession } from "next-auth"
+
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string
+    } & DefaultSession["user"]
+  }
+}
