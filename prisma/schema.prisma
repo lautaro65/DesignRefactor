@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  avatarUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  plan             String   @default("free")
+  rendersUsedMonth Int      @default(0)
+  rendersResetAt   DateTime @default(now())
+
+  designs       Design[]
+  savedPalettes SavedPalette[]
+  subscription  Subscription?
+
+  @@map("users")
+}
+
+model Design {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  roomType  String
+  style     String
+  palette   String[]
+  prompt    String?
+  maxPrice  Int?
+
+  originalImageUrl  String
+  generatedImageUrl String?
+
+  products Json?
+
+  status String @default("pending")
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("designs")
+}
+
+model SavedPalette {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+
+  name   String
+  colors String[]
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("saved_palettes")
+}
+
+model Subscription {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  status    String   @default("active")
+  plan      String
+  expiresAt DateTime
+
+  externalId String? @unique
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("subscriptions")
+}
