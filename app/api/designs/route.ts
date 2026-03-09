@@ -3,7 +3,7 @@
 // POST → crear design nuevo (antes de generar)
 
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/app/prisma";
+import  prisma  from "@/app/lib/prisma"
 
 // GET /api/designs?userId=xxx&limit=10
 export async function GET(req: NextRequest) {

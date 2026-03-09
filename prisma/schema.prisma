@@ -7,6 +7,7 @@ datasource db {
   provider = "postgresql"
 }
 
+
 // ─── NEXTAUTH REQUIRED TABLES ─────────────────────────────────────────────────
 
 model Account {
@@ -49,18 +50,28 @@ model VerificationToken {
   @@map("verification_tokens")
 }
 
+// ─── APP CONFIG (tokens ML, etc) ─────────────────────────────────────────────
+
+model AppConfig {
+  key       String   @id
+  value     String   @db.Text
+  updatedAt DateTime @updatedAt
+
+  @@map("app_config")
+}
+
 // ─── APP MODELS ───────────────────────────────────────────────────────────────
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
+  id            String    @id @default(cuid())
+  email         String    @unique
   emailVerified DateTime?
-  password  String?
-  name      String?
-  image     String?
-  avatarUrl String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  passwordHash  String?
+  name          String?
+  image         String?
+  avatarUrl     String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   plan             String   @default("free")
   rendersUsedMonth Int      @default(0)
@@ -89,8 +100,7 @@ model Design {
   generatedImageUrl String?
 
   products Json?
-
-  status String @default("pending")
+  status   String @default("pending")
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)

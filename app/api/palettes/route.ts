@@ -3,7 +3,7 @@
 // POST → guardar paleta nueva
 
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/app/prisma";
+import  prisma  from "@/app/lib/prisma"
 
 // GET /api/palettes?userId=xxx
 export async function GET(req: NextRequest) {

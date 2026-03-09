@@ -4,7 +4,7 @@
 // Se completa en Fase 4 cuando tengamos los productos reales de ML
 
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/app/prisma";
+import  prisma  from "@/app/lib/prisma"
 
 export async function POST(req: NextRequest) {
   try {
